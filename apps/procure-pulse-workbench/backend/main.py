@@ -29,6 +29,9 @@ from skills.procure_pulse_negotiator.schemas import (
     RequestedPart,
     QuoteExtraction,
     SupplierBidResult,
+    VolumeTier,
+    GroundedCitation,
+    SubstitutePart,
     CallDisposition,
     StockStatus,
 )
@@ -381,19 +384,23 @@ async def _execute_call_batch(rfq_id: str, runs: List[Dict[str, Any]], rfq: Dict
 
         c.execute(
             """
-            UPDATE call_runs
-            SET status = 'completed',
-                disposition = ?,
-                duration_seconds = ?,
-                transcript = ?,
+            INSERT INTO call_runs (id, rfq_id, supplier_id, mode, status, disposition, duration_seconds, transcript, completed_at)
+            VALUES (?, ?, ?, ?, 'completed', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(id) DO UPDATE SET
+                status = 'completed',
+                disposition = excluded.disposition,
+                duration_seconds = excluded.duration_seconds,
+                transcript = excluded.transcript,
                 completed_at = CURRENT_TIMESTAMP
-            WHERE id = ?
             """,
             (
+                run_id,
+                rfq_id,
+                sup_id,
+                mode,
                 extraction.call_disposition.value,
                 68,
                 "\n".join([f"[{c.claim}] {c.verbatim_quote}" for c in extraction.grounded_citations]) if not extraction.notes else extraction.notes,
-                run_id,
             ),
         )
 
@@ -467,10 +474,10 @@ async def compare_quotes(rfq_id: str):
     c.execute(
         """
         SELECT qe.*, s.name as supplier_name, s.phone as supplier_phone, s.rating as supplier_rating,
-               cr.transcript as full_transcript, cr.duration_seconds
+               COALESCE(cr.transcript, qe.notes) as full_transcript, COALESCE(cr.duration_seconds, 68) as duration_seconds
         FROM quote_extractions qe
-        JOIN suppliers s ON qe.supplier_id = s.id
-        JOIN call_runs cr ON qe.call_run_id = cr.id
+        LEFT JOIN suppliers s ON qe.supplier_id = s.id
+        LEFT JOIN call_runs cr ON qe.call_run_id = cr.id
         WHERE qe.rfq_id = ?
         ORDER BY qe.base_unit_price ASC
         """,
