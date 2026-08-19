@@ -101,7 +101,7 @@ SUPPLIER_PERSONAS = {
     },
     "sup-precision": {
         "name": "Precision Metals & Component Direct",
-        "rep": "Elena Rostova",
+        "rep": "Karen Lewis",
         "quote_ref": "PMC-7720-X",
         "base_price_factor": 0.877,  # $39.50 substitute
         "tiers": [(250, 39.50), (500, 36.00), (1000, 32.50)],
@@ -120,13 +120,13 @@ SUPPLIER_PERSONAS = {
         "script_template": [
             (0, "System", "Dialing +18005550166... Ringing... Connected."),
             (3, "CalleAgent", "Hello! Calling Precision Metals on behalf of VoltPulse Manufacturing regarding quote for part number {sku}."),
-            (9, "Supplier", "Hello, Elena with key accounts here. Checking {sku}..."),
+            (9, "Supplier", "Hello, Karen with key accounts here. Checking {sku}..."),
             (16, "Supplier", "The OEM branded {sku} is currently backordered for 3 weeks across the distributor network. However, we have 800 units of our direct certified drop-in replacement, part SS-400-1-4-EQUIV in stock right now."),
             (27, "CalleAgent", "What are the specifications and price on the SS-400-1-4-EQUIV equivalent for {qty} units?"),
             (35, "Supplier", "It is 100% form-fit-function compatible, same 316 stainless steel, tested to 1000 PSI, and we can offer it at $39.50 per unit. At 500 units it is $36.00, and at 1,000 units it is $32.50."),
             (46, "CalleAgent", "When can that ship, and what are the freight terms?"),
             (52, "Supplier", "It can ship today for 1-day delivery with free express freight included."),
-            (60, "CalleAgent", "Excellent. I will note the substitute specification and quote PMC-7720-X for our engineering and purchasing team to review. Thank you Elena!"),
+            (60, "CalleAgent", "Excellent. I will note the substitute specification and quote PMC-7720-X for our engineering and purchasing team to review. Thank you Karen!"),
             (68, "System", "Call ended normally. Total duration: 68s."),
         ],
     },
